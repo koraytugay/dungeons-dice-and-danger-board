@@ -163,14 +163,14 @@ html, body {
   color: var(--text-primary);
 }
 
-/* Rectangle stamp icon inside the button */
+/* Yellow square icon inside the button */
 .yellow-square-icon {
   display: inline-block;
-  width: 16px;
-  height: 22px;
-  background-color: rgba(0, 0, 0, 0.75);
-  border: 1.5px solid #888888;
-  border-radius: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: #facc15;
+  border: 1px solid #ca8a04;
+  border-radius: 3px;
   pointer-events: none;
 }
 
@@ -262,7 +262,7 @@ html, body {
 }
 
 #draw-canvas.yellow-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Crect x='1.5' y='1.5' width='19' height='27' rx='2' fill='rgba(0,0,0,0.5)' stroke='%23ffffff' stroke-width='1.5'/%3E%3Cline x1='11' y1='9' x2='11' y2='21' stroke='%23ffffff' stroke-width='1'/%3E%3Cline x1='5' y1='15' x2='17' y2='15' stroke='%23ffffff' stroke-width='1'/%3E%3C/svg%3E") 11 15, crosshair;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Crect x='1.5' y='1.5' width='19' height='27' rx='2' fill='rgba(255,225,0,0.5)' stroke='%23333333' stroke-width='1.5'/%3E%3Cline x1='11' y1='9' x2='11' y2='21' stroke='%23333333' stroke-width='1'/%3E%3Cline x1='5' y1='15' x2='17' y2='15' stroke='%23333333' stroke-width='1'/%3E%3C/svg%3E") 11 15, crosshair;
 }
 
 #draw-canvas.eraser-active {

@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const X_LARGE_STROKE = 20;
   const X_SMALL_RADIUS = 14; // Small X stamp (Tool 2)
   const X_SMALL_STROKE = 8;
-  const YELLOW_RECT_COLOR = 'rgba(0, 0, 0, 0.5)'; // 50% transparent black
+  const YELLOW_RECT_COLOR = 'rgba(255, 225, 0, 0.5)'; // 50% transparent yellow
   const YELLOW_STAMP_WIDTH = 54;  // Rotated 90 degrees (vertical)
   const YELLOW_STAMP_HEIGHT = 76;
 
