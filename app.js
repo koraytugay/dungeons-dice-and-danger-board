@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const X_LARGE_STROKE = 20;
   const X_SMALL_RADIUS = 14; // Small X stamp (Tool 2)
   const X_SMALL_STROKE = 8;
-  const YELLOW_RECT_COLOR = 'rgba(255, 225, 0, 0.5)'; // 50% transparent yellow
+  const YELLOW_RECT_COLOR = 'rgba(0, 0, 0, 0.5)'; // 50% transparent black
   const YELLOW_STAMP_WIDTH = 54;  // Rotated 90 degrees (vertical)
   const YELLOW_STAMP_HEIGHT = 76;
 
@@ -637,11 +637,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       el.innerHTML = `
-        <div class="pair-square ${res.p1.isDoubles ? 'is-doubles' : ''}">
+        <div class="pair-square ${res.p1.isDoubles ? 'is-doubles' : ''} ${res.p1.hasBlack ? 'has-black-die' : ''}">
           <div class="pair-sum">${res.p1.sum}</div>
           <div class="pair-dice">${formatDice(res.p1)}</div>
         </div>
-        <div class="pair-square ${res.p2.isDoubles ? 'is-doubles' : ''}">
+        <div class="pair-square ${res.p2.isDoubles ? 'is-doubles' : ''} ${res.p2.hasBlack ? 'has-black-die' : ''}">
           <div class="pair-sum">${res.p2.sum}</div>
           <div class="pair-dice">${formatDice(res.p2)}</div>
         </div>
