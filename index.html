@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dungeons, Dice & Danger Board</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app-container">
+    <!-- Left Controls Sidebar (~5% width) -->
+    <aside id="sidebar" role="toolbar" aria-label="Drawing Tools">
+      <div class="sidebar-header">
+        <span class="app-icon" title="Dungeons, Dice & Danger">🎲</span>
+      </div>
+      
+      <div class="tools-group">
+        <!-- Big X Stamp Tool Button (Key 1) -->
+        <button
+          id="btn-x-large"
+          class="tool-btn"
+          title="Big X Stamp (Press 1)"
+          aria-label="Big X Mark"
+          aria-pressed="false"
+        >
+          <svg class="x-mark-icon x-icon-large" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round">
+            <line x1="20" y1="4" x2="4" y2="20"></line>
+            <line x1="4" y1="4" x2="20" y2="20"></line>
+          </svg>
+          <kbd class="shortcut-key">1</kbd>
+        </button>
+
+        <!-- Small X Stamp Tool Button (Key 2) -->
+        <button
+          id="btn-x-small"
+          class="tool-btn"
+          title="Small X Stamp (Press 2)"
+          aria-label="Small X Mark"
+          aria-pressed="false"
+        >
+          <svg class="x-mark-icon x-icon-small" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+          <kbd class="shortcut-key">2</kbd>
+        </button>
+
+        <!-- Yellow Rectangle Stamp Tool Button (Key 3) -->
+        <button
+          id="btn-yellow-rect"
+          class="tool-btn"
+          title="Yellow Rectangle Stamp (Press 3)"
+          aria-label="Yellow Rectangle Stamp"
+          aria-pressed="false"
+        >
+          <span class="yellow-square-icon"></span>
+          <kbd class="shortcut-key">3</kbd>
+        </button>
+
+        <!-- Eraser Tool Button (Key 4) -->
+        <button
+          id="btn-eraser"
+          class="tool-btn"
+          title="Eraser (Press 4)"
+          aria-label="Eraser"
+          aria-pressed="false"
+        >
+          <svg class="tool-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
+            <path d="M22 21H7"></path>
+            <path d="m5 11 9 9"></path>
+          </svg>
+          <kbd class="shortcut-key">4</kbd>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button id="btn-undo" class="tool-btn-secondary" title="Undo (Cmd+Z)" aria-label="Undo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6"></path>
+            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
+          </svg>
+        </button>
+        <button id="btn-clear" class="tool-btn-secondary" title="Clear Canvas" aria-label="Clear Canvas">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Board Area -->
+    <main id="board-wrapper">
+      <div id="canvas-container">
+        <img
+          id="board-image"
+          src=""
+          alt="Dungeons Dice and Danger Board"
+          draggable="false"
+        />
+        <canvas id="draw-canvas"></canvas>
+      </div>
+    </main>
+
+    <!-- Right Side Dice Roller Panel -->
+    <aside id="roller-panel">
+      <div class="roller-header">
+        <h2>Dungeons, Dice & Danger</h2>
+        <span class="roller-subtitle">Dice Roller & Pairings</span>
+      </div>
+
+      <div class="dice-container" id="diceContainer">
+        <div class="die-wrapper"><div class="die white">?</div></div>
+        <div class="die-wrapper"><div class="die white">?</div></div>
+        <div class="die-wrapper"><div class="die white">?</div></div>
+        <div class="die-wrapper"><div class="die white">?</div></div>
+        <div class="die-wrapper">
+          <div class="die black" id="blackDie">?</div>
+          <label class="checkbox-container">
+            <input type="checkbox" id="useBlackDie" checked>
+            <span>Roll Black</span>
+          </label>
+        </div>
+      </div>
+
+      <button id="rollBtn" class="roll-btn" title="Roll Dice (Press R)">
+        <span>Roll Dice</span>
+        <kbd class="roll-kbd">R</kbd>
+      </button>
+
+      <div class="combinations-section" id="combinationsSection">
+        <div class="combinations" id="whiteCombinations"></div>
+        <div id="sectionDivider" class="divider" style="display: none;">
+          <span>Pairs with Black Die</span>
+        </div>
+        <div class="combinations" id="blackCombinations"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Passcode Decryption Modal Overlay -->
+  <div id="passcodeModal" class="passcode-overlay">
+    <div class="passcode-card">
+      <div class="passcode-icon">
+        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h2>Board Decryption</h2>
+      <p class="passcode-desc">Enter the passcode to unlock and load the encrypted game board.</p>
+      
+      <form id="passcodeForm" class="passcode-form">
+        <div class="input-group">
+          <input
+            type="password"
+            id="passcodeInput"
+            class="passcode-input"
+            placeholder="Enter passcode..."
+            autocomplete="current-password"
+            autofocus
+            required
+          />
+          <button type="button" id="togglePasscodeBtn" class="toggle-passcode-btn" title="Show / Hide Passcode">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
+        
+        <div id="passcodeError" class="passcode-error" style="display: none;"></div>
+        
+        <button type="submit" id="submitPasscodeBtn" class="passcode-submit-btn">
+          <span class="btn-text">Unlock Board</span>
+          <span class="btn-spinner" style="display: none;"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
