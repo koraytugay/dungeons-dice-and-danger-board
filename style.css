@@ -745,3 +745,288 @@ html, body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* ==========================================================================
+   Responsive & Tablet / Mobile Styles (Ultra-Compact on iPad & Mobile)
+   ========================================================================== */
+
+/* iPad Air Landscape & moderate screens (<= 1200px) */
+@media (max-width: 1200px) {
+  #sidebar {
+    width: 44px;
+    min-width: 44px;
+    padding: 6px 2px;
+  }
+
+  .tool-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .tool-btn-secondary {
+    width: 30px;
+    height: 30px;
+  }
+
+  #roller-panel {
+    flex: 0 0 170px;
+    width: 170px;
+    min-width: 170px;
+    padding: 0.5rem 0.35rem;
+  }
+
+  .roller-header {
+    margin-bottom: 0.4rem;
+  }
+
+  .roller-header h2 {
+    font-size: 0.85rem;
+  }
+
+  .roller-subtitle {
+    font-size: 0.62rem;
+  }
+
+  .dice-container {
+    gap: 0.25rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .die {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    border-radius: 4px;
+  }
+
+  .checkbox-container {
+    font-size: 0.62rem;
+    padding: 1px 4px;
+    gap: 0.2rem;
+  }
+
+  .checkbox-container input {
+    width: 10px;
+    height: 10px;
+  }
+
+  .roll-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    margin-bottom: 0.45rem;
+    width: 95%;
+    gap: 4px;
+  }
+
+  .roll-kbd {
+    font-size: 0.62rem;
+    padding: 1px 4px;
+  }
+
+  .divider {
+    margin: 0.4rem 0 0.25rem 0;
+    gap: 0.3rem;
+  }
+
+  .divider span {
+    font-size: 0.58rem;
+    padding: 1px 5px;
+  }
+
+  .combinations {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .combination {
+    padding: 3px 2px;
+    gap: 3px;
+    border-radius: 4px;
+  }
+
+  .pair-square {
+    width: 48px;
+    height: 48px;
+    border-radius: 3px;
+  }
+
+  .pair-sum {
+    font-size: 1.15rem;
+  }
+
+  .pair-dice {
+    margin-top: 1px;
+    gap: 2px;
+  }
+
+  .mini-die {
+    width: 14px;
+    height: 14px;
+    font-size: 0.58rem;
+    border-radius: 2px;
+  }
+
+  .plus-sign {
+    font-size: 0.6rem;
+  }
+}
+
+/* iPad Air Portrait & vertical tablet / mobile screens (<= 900px, or portrait <= 1024px) */
+@media (max-width: 900px), (orientation: portrait) and (max-width: 1024px) {
+  #app-container {
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  #sidebar {
+    width: 100%;
+    height: 40px;
+    min-width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2px 10px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding-bottom: 0;
+  }
+
+  .app-icon {
+    font-size: 18px;
+  }
+
+  .tools-group {
+    flex-direction: row;
+    margin-top: 0;
+    justify-content: center;
+    gap: 6px;
+    flex: none;
+  }
+
+  .tool-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tool-btn.active::after {
+    right: auto;
+    bottom: -4px;
+    top: auto;
+    transform: none;
+    width: 14px;
+    height: 2px;
+    left: 50%;
+    margin-left: -7px;
+  }
+
+  .sidebar-footer {
+    flex-direction: row;
+    width: auto;
+    gap: 5px;
+  }
+
+  .tool-btn-secondary {
+    width: 28px;
+    height: 28px;
+  }
+
+  #board-wrapper {
+    flex: 1 1 auto;
+    width: 100%;
+    height: auto;
+    padding: 4px;
+    min-height: 0;
+  }
+
+  #roller-panel {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    max-height: 22vh;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 0.4rem 0.6rem;
+    overflow-y: auto;
+  }
+
+  .roller-header {
+    margin-bottom: 0.3rem;
+  }
+
+  .roller-header h2 {
+    font-size: 0.85rem;
+  }
+
+  .roller-subtitle {
+    font-size: 0.62rem;
+  }
+
+  .dice-container {
+    gap: 0.35rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .die {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    border-radius: 4px;
+  }
+
+  .checkbox-container {
+    font-size: 0.62rem;
+    padding: 1px 4px;
+  }
+
+  .roll-btn {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .combinations {
+    grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+    gap: 4px;
+  }
+
+  .combination {
+    padding: 3px 2px;
+    gap: 3px;
+    border-radius: 4px;
+  }
+
+  .pair-square {
+    width: 44px;
+    height: 44px;
+    border-radius: 3px;
+  }
+
+  .pair-sum {
+    font-size: 1.05rem;
+  }
+
+  .pair-dice {
+    margin-top: 1px;
+    gap: 2px;
+  }
+
+  .mini-die {
+    width: 13px;
+    height: 13px;
+    font-size: 0.55rem;
+    border-radius: 2px;
+  }
+
+  .plus-sign {
+    font-size: 0.55rem;
+  }
+}
+
+
