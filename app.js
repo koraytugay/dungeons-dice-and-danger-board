@@ -133,8 +133,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const blob = new Blob([decryptedBuffer], { type: 'image/png' });
       const objectUrl = URL.createObjectURL(blob);
 
+      // Cache passcode in session so reloading preserves board state
+      try {
+        sessionStorage.setItem('ddd_passcode', passcode);
+      } catch (e) {}
+
       boardImage.onload = () => {
         setupCanvasResolution();
+        loadDrawingFromStorage();
         if (passcodeModal) {
           passcodeModal.classList.add('fade-out');
           setTimeout(() => {
@@ -160,6 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Auto-unlock if passcode was already entered in this browser session
+  try {
+    const cachedPasscode = sessionStorage.getItem('ddd_passcode');
+    if (cachedPasscode) {
+      if (passcodeInput) passcodeInput.value = cachedPasscode;
+      decryptAndLoadImage(cachedPasscode);
+    }
+  } catch (e) {}
+
   if (passcodeForm) {
     passcodeForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -168,6 +183,42 @@ document.addEventListener('DOMContentLoaded', () => {
         decryptAndLoadImage(code);
       }
     });
+  }
+
+  // LocalStorage Persistence for Drawings
+  const STORAGE_KEY = 'ddd_board_drawing';
+
+  function saveDrawingToStorage() {
+    if (!canvas.width || !canvas.height) return;
+    try {
+      const dataUrl = canvas.toDataURL('image/png');
+      localStorage.setItem(STORAGE_KEY, dataUrl);
+    } catch (err) {
+      console.warn('Failed to save drawing to localStorage:', err);
+    }
+  }
+
+  function loadDrawingFromStorage() {
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          // Initialize undo stack with restored drawing
+          undoStack.length = 0;
+          redoStack.length = 0;
+          try {
+            const state = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            undoStack.push(state);
+          } catch (e) {}
+        };
+        img.src = savedData;
+      }
+    } catch (err) {
+      console.warn('Failed to load drawing from localStorage:', err);
+    }
   }
 
   // Undo / Redo Functions
@@ -192,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
       redoStack.push(currentState);
       const previousState = undoStack.pop();
       ctx.putImageData(previousState, 0, 0);
+      saveDrawingToStorage();
     } catch (err) {
       console.warn('Undo failed:', err);
     }
@@ -204,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       undoStack.push(currentState);
       const nextState = redoStack.pop();
       ctx.putImageData(nextState, 0, 0);
+      saveDrawingToStorage();
     } catch (err) {
       console.warn('Redo failed:', err);
     }
@@ -266,6 +319,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const btnFullscreen = document.getElementById('btn-fullscreen');
+
+  // Fullscreen toggle logic (supports standard + WebKit Safari/iPad)
+  function toggleFullscreen() {
+    const doc = document;
+    const docEl = document.documentElement;
+
+    const isFullscreen = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+
+    if (!isFullscreen) {
+      if (docEl.requestFullscreen) {
+        docEl.requestFullscreen().catch(() => {});
+      } else if (docEl.webkitRequestFullscreen) {
+        docEl.webkitRequestFullscreen();
+      } else if (docEl.mozRequestFullScreen) {
+        docEl.mozRequestFullScreen();
+      } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+      }
+    } else {
+      if (doc.exitFullscreen) {
+        doc.exitFullscreen().catch(() => {});
+      } else if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen();
+      } else if (doc.mozCancelFullScreen) {
+        doc.mozCancelFullScreen();
+      } else if (doc.msExitFullscreen) {
+        doc.msExitFullscreen();
+      }
+    }
+  }
+
+  function updateFullscreenIcon() {
+    const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    const icon = document.getElementById('fullscreen-icon');
+    if (icon) {
+      if (isFullscreen) {
+        icon.innerHTML = `<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>`;
+      } else {
+        icon.innerHTML = `<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>`;
+      }
+    }
+  }
+
+  if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', toggleFullscreen);
+  }
+
+  document.addEventListener('fullscreenchange', updateFullscreenIcon);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+  document.addEventListener('mozfullscreenchange', updateFullscreenIcon);
+  document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
+
   // Undo button
   if (btnUndo) {
     btnUndo.addEventListener('click', undo);
@@ -276,10 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btnClear.addEventListener('click', () => {
       saveState();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (err) {}
     });
   }
 
-  // Keyboard shortcuts (1: Big X, 2: Small X, 3: Yellow Stamp, 4: Eraser, Cmd+Z: Undo)
+  // Keyboard shortcuts (1: Big X, 2: Small X, 3: Yellow Stamp, 4: Eraser, F: Fullscreen, Cmd+Z: Undo)
   window.addEventListener('keydown', (e) => {
     // Ignore if passcode modal is active or typing in input or textarea
     if (document.getElementById('passcodeModal')) {
@@ -289,27 +398,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Number keys 1-4 for tool switching and R for Roll Dice (without Cmd / Ctrl / Alt)
+    // Number keys 1-4 for tool switching, R for Roll Dice, F for Fullscreen (without Cmd / Ctrl / Alt)
     if (!e.metaKey && !e.ctrlKey && !e.altKey) {
       if (e.key === 'r' || e.key === 'R') {
         e.preventDefault();
         startRoll();
         return;
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
       } else if (e.key === '1') {
         e.preventDefault();
-        setActiveTool('x-large');
+        setActiveTool(activeTool === 'x-large' ? null : 'x-large');
         return;
       } else if (e.key === '2') {
         e.preventDefault();
-        setActiveTool('x-small');
+        setActiveTool(activeTool === 'x-small' ? null : 'x-small');
         return;
       } else if (e.key === '3') {
         e.preventDefault();
-        setActiveTool('yellow-rect');
+        setActiveTool(activeTool === 'yellow-rect' ? null : 'yellow-rect');
         return;
       } else if (e.key === '4') {
         e.preventDefault();
-        setActiveTool('eraser');
+        setActiveTool(activeTool === 'eraser' ? null : 'eraser');
         return;
       }
     }
@@ -453,6 +566,8 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       // Ignore
     }
+
+    saveDrawingToStorage();
   }
 
   // Attach pointer events for seamless mouse, touch, and stylus support
