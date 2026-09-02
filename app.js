@@ -682,8 +682,8 @@ document.addEventListener('DOMContentLoaded', () => {
     popupCanvasX = canvasX;
     popupCanvasY = canvasY;
 
-    // Viewport boundary clamping to keep all 5 options visible on screen
-    const margin = 85;
+    // Viewport boundary clamping to keep options visible on screen
+    const margin = 55;
     const clampedX = Math.max(margin, Math.min(window.innerWidth - margin, clientX));
     const clampedY = Math.max(margin, Math.min(window.innerHeight - margin, clientY));
 

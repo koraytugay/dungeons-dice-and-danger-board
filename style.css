@@ -247,6 +247,7 @@ html, body {
   object-fit: contain;
   pointer-events: none;
   user-select: none;
+  filter: contrast(1.2) saturate(1.15);
 }
 
 #draw-canvas {
@@ -891,55 +892,55 @@ html, body {
 /* Faint dashed orbit circle behind the buttons */
 .radial-orbit {
   position: absolute;
-  top: -54px;
-  left: -54px;
-  width: 108px;
-  height: 108px;
+  top: -36px;
+  left: -36px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 1.5px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
   pointer-events: none;
   box-sizing: border-box;
 }
 
-/* The 3 Radial Option Buttons */
+/* The 3 Radial Option Buttons (Slightly Bigger & Snug) */
 .radial-item {
   position: absolute;
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background-color: var(--bg-surface);
   border: 1.5px solid var(--border-light);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   outline: none;
   padding: 0;
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1),
-              background-color 0.15s ease,
-              border-color 0.15s ease,
-              box-shadow 0.15s ease;
+  transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1),
+              background-color 0.12s ease,
+              border-color 0.12s ease,
+              box-shadow 0.12s ease;
   z-index: 10;
 }
 
-/* Placements around click center (R = 54px, 120° apart) */
+/* Snug circular placement (R = 36px, 120° apart) */
 /* Option 1: Top (-90°) */
 .radial-item[data-tool="x-large"] {
-  top: -77px;
-  left: -23px;
+  top: -60px;
+  left: -24px;
 }
 
 /* Option 2: Bottom-Right (+30°) */
 .radial-item[data-tool="x-small"] {
-  top: 4px;
-  left: 24px;
+  top: -6px;
+  left: 7px;
 }
 
 /* Option 3: Bottom-Left (+150°) */
 .radial-item[data-tool="yellow-rect"] {
-  top: 4px;
-  left: -70px;
+  top: -6px;
+  left: -55px;
 }
 
 /* Hover & Active states */
@@ -960,8 +961,8 @@ html, body {
 
 /* Yellow rectangle icon inside radial menu */
 .radial-yellow-rect {
-  width: 16px;
-  height: 22px;
+  width: 17px;
+  height: 23px;
   background-color: #facc15;
   border: 1.5px solid #ca8a04;
   border-radius: 2px;
@@ -1013,19 +1014,19 @@ html, body {
 }
 
 .radial-item[data-tool="x-large"] .radial-tooltip {
-  top: -24px;
+  top: -26px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .radial-item[data-tool="x-small"] .radial-tooltip {
-  bottom: -22px;
+  bottom: -24px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .radial-item[data-tool="yellow-rect"] .radial-tooltip {
-  bottom: -24px;
+  bottom: -26px;
   left: 50%;
   transform: translateX(-50%);
 }
