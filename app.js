@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle shortcuts when radial popup is open
     if (typeof isRadialPopupOpen === 'function' && isRadialPopupOpen()) {
-      if (e.key === 'Escape' || e.key === '5') {
+      if (e.key === 'Escape') {
         e.preventDefault();
         closeRadialMenu();
         return;
@@ -425,11 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (e.key === '3') {
         e.preventDefault();
         drawStampAt('yellow-rect', popupCanvasX, popupCanvasY);
-        closeRadialMenu();
-        return;
-      } else if (e.key === '4') {
-        e.preventDefault();
-        drawStampAt('eraser', popupCanvasX, popupCanvasY);
         closeRadialMenu();
         return;
       }
