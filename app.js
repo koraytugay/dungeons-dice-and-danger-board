@@ -875,12 +875,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       el.innerHTML = `
         <div class="pair-square ${res.p1.isDoubles ? 'is-doubles' : ''} ${res.p1.hasBlack ? 'has-black-die' : ''}" title="${res.p1.hasBlack ? 'Uses Black Die' : 'White Dice'}${res.p1.isDoubles ? ' (Doubles)' : ''}">
-          ${res.p1.hasBlack ? '<span class="black-badge">⬛</span>' : ''}
           ${res.p1.isDoubles ? '<span class="doubles-badge">2×</span>' : ''}
           <div class="pair-sum">${res.p1.sum}</div>
         </div>
         <div class="pair-square ${res.p2.isDoubles ? 'is-doubles' : ''} ${res.p2.hasBlack ? 'has-black-die' : ''}" title="${res.p2.hasBlack ? 'Uses Black Die' : 'White Dice'}${res.p2.isDoubles ? ' (Doubles)' : ''}">
-          ${res.p2.hasBlack ? '<span class="black-badge">⬛</span>' : ''}
           ${res.p2.isDoubles ? '<span class="doubles-badge">2×</span>' : ''}
           <div class="pair-sum">${res.p2.sum}</div>
         </div>
