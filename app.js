@@ -11,12 +11,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Application State
   // Tools: 'x-large' | 'x-small' | 'yellow-rect' | 'eraser' | null
-  let activeTool = 'x-large';
+  let activeTool = null;
   let isDrawing = false;
   let startX = 0;
   let startY = 0;
   let lastX = 0;
   let lastY = 0;
+  let popupCanvasX = 0;
+  let popupCanvasY = 0;
 
   // History Stacks for Undo / Redo
   const undoStack = [];
@@ -293,6 +295,11 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.classList.toggle('x-small-active', activeTool === 'x-small');
     canvas.classList.toggle('yellow-active', activeTool === 'yellow-rect');
     canvas.classList.toggle('eraser-active', activeTool === 'eraser');
+
+    // Close radial menu if a tool is selected
+    if (activeTool && typeof closeRadialMenu === 'function' && isRadialPopupOpen()) {
+      closeRadialMenu();
+    }
   }
 
   if (btnXLarge) {
@@ -395,6 +402,42 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+      return;
+    }
+
+    // Handle shortcuts when radial popup is open
+    if (typeof isRadialPopupOpen === 'function' && isRadialPopupOpen()) {
+      if (e.key === 'Escape' || e.key === '5') {
+        e.preventDefault();
+        closeRadialMenu();
+        return;
+      } else if (e.key === '1') {
+        e.preventDefault();
+        drawStampAt('x-large', popupCanvasX, popupCanvasY);
+        closeRadialMenu();
+        return;
+      } else if (e.key === '2') {
+        e.preventDefault();
+        drawStampAt('x-small', popupCanvasX, popupCanvasY);
+        closeRadialMenu();
+        return;
+      } else if (e.key === '3') {
+        e.preventDefault();
+        drawStampAt('yellow-rect', popupCanvasX, popupCanvasY);
+        closeRadialMenu();
+        return;
+      } else if (e.key === '4') {
+        e.preventDefault();
+        drawStampAt('eraser', popupCanvasX, popupCanvasY);
+        closeRadialMenu();
+        return;
+      }
+    }
+
+    // Escape when radial menu is not open: deselect active tool
+    if (e.key === 'Escape' && activeTool) {
+      e.preventDefault();
+      setActiveTool(null);
       return;
     }
 
@@ -577,8 +620,134 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.addEventListener('pointercancel', stopDrawing);
   canvas.addEventListener('pointerleave', stopDrawing);
 
-  // Activate Big X by default on load
-  setActiveTool('x-large');
+  // Draw a stamp centered at given canvas coordinates
+  function drawStampAt(tool, x, y) {
+    if (!tool || tool === 'cancel') return;
+    saveState();
+
+    if (tool === 'x-large') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = X_COLOR;
+      ctx.fillStyle = X_COLOR;
+      ctx.lineWidth = X_LARGE_STROKE;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      const r = X_LARGE_RADIUS;
+      ctx.beginPath();
+      ctx.moveTo(x - r, y - r);
+      ctx.lineTo(x + r, y + r);
+      ctx.moveTo(x + r, y - r);
+      ctx.lineTo(x - r, y + r);
+      ctx.stroke();
+    } else if (tool === 'x-small') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.strokeStyle = X_COLOR;
+      ctx.fillStyle = X_COLOR;
+      ctx.lineWidth = X_SMALL_STROKE;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      const r = X_SMALL_RADIUS;
+      ctx.beginPath();
+      ctx.moveTo(x - r, y - r);
+      ctx.lineTo(x + r, y + r);
+      ctx.moveTo(x + r, y - r);
+      ctx.lineTo(x - r, y + r);
+      ctx.stroke();
+    } else if (tool === 'yellow-rect') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = YELLOW_RECT_COLOR;
+      const w = YELLOW_STAMP_WIDTH;
+      const h = YELLOW_STAMP_HEIGHT;
+      ctx.fillRect(x - w / 2, y - h / 2, w, h);
+    } else if (tool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.fillStyle = 'rgba(0,0,0,1)';
+      const radius = ERASER_WIDTH / 2;
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    saveDrawingToStorage();
+  }
+
+  // =========================================================================
+  // Radial Popup Logic (shown when activeTool === null and user clicks board)
+  // =========================================================================
+  const radialPopup = document.getElementById('radial-popup');
+  const radialMenu = document.getElementById('radial-menu');
+
+  function isRadialPopupOpen() {
+    return radialPopup && radialPopup.style.display !== 'none';
+  }
+
+  function openRadialMenu(clientX, clientY, canvasX, canvasY) {
+    if (!radialPopup || !radialMenu) return;
+    popupCanvasX = canvasX;
+    popupCanvasY = canvasY;
+
+    // Viewport boundary clamping to keep all 5 options visible on screen
+    const margin = 85;
+    const clampedX = Math.max(margin, Math.min(window.innerWidth - margin, clientX));
+    const clampedY = Math.max(margin, Math.min(window.innerHeight - margin, clientY));
+
+    radialMenu.style.left = `${clampedX}px`;
+    radialMenu.style.top = `${clampedY}px`;
+
+    radialPopup.style.display = 'block';
+    radialPopup.setAttribute('aria-hidden', 'false');
+
+    radialMenu.classList.remove('animate-pop');
+    void radialMenu.offsetWidth; // Reflow to restart pop animation
+    radialMenu.classList.add('animate-pop');
+  }
+
+  function closeRadialMenu() {
+    if (!radialPopup) return;
+    radialPopup.style.display = 'none';
+    radialPopup.setAttribute('aria-hidden', 'true');
+  }
+
+  // Open radial menu when clicking the canvas if no tool is selected
+  canvas.addEventListener('click', (e) => {
+    // If a tool is active, stamp was already drawn in pointerdown
+    if (activeTool) return;
+    // Don't open if passcode modal is still displayed
+    if (document.getElementById('passcodeModal')) return;
+    if (e.button !== undefined && e.button !== 0) return;
+
+    const { x, y } = getCanvasCoordinates(e);
+    openRadialMenu(e.clientX, e.clientY, x, y);
+  });
+
+  // Handle interactions on the radial menu (options, center cancel hub, backdrop)
+  if (radialPopup) {
+    radialPopup.addEventListener('click', (e) => {
+      const item = e.target.closest('.radial-item');
+      if (item) {
+        const tool = item.getAttribute('data-tool');
+        if (tool === 'cancel') {
+          closeRadialMenu();
+        } else if (tool) {
+          drawStampAt(tool, popupCanvasX, popupCanvasY);
+          closeRadialMenu();
+        }
+        return;
+      }
+
+      // Clicking backdrop or center hub simply cancels
+      closeRadialMenu();
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    if (isRadialPopupOpen()) {
+      closeRadialMenu();
+    }
+  });
+
+  // Start with no tool selected so radial popup is immediately available
+  setActiveTool(null);
 
   // =========================================================================
   // Dice Roller Logic (from dungeons-dice-and-danger)

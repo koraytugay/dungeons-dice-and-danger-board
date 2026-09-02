@@ -256,7 +256,7 @@ html, body {
   width: 100%;
   height: 100%;
   touch-action: none;
-  cursor: default;
+  cursor: crosshair;
 }
 
 /* Active Cursors */
@@ -903,6 +903,286 @@ html, body {
   .plus-sign {
     font-size: 0.55rem;
   }
+}
+
+/* ==========================================================================
+   Radial Action Menu (Circle of options when no tool is selected)
+   ========================================================================== */
+.radial-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.radial-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 12, 16, 0.4);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
+}
+
+.radial-menu {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+  transform-origin: 0 0;
+}
+
+.radial-menu.animate-pop {
+  animation: radialPopIn 0.16s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+}
+
+@keyframes radialPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Faint dashed orbit circle behind the buttons */
+.radial-orbit {
+  position: absolute;
+  top: -68px;
+  left: -68px;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* Center hub indicating click target / quick cancel */
+.radial-center {
+  position: absolute;
+  top: -19px;
+  left: -19px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #181a20;
+  border: 1.5px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+  z-index: 5;
+  padding: 0;
+  color: var(--text-secondary);
+  outline: none;
+}
+
+.radial-center:hover {
+  background-color: #3b1d24;
+  border-color: #ef4444;
+  color: #ef4444;
+  transform: scale(1.1);
+}
+
+.radial-reticle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.radial-center:hover .radial-reticle {
+  opacity: 0;
+}
+
+.radial-center-icon {
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.radial-center:hover .radial-center-icon {
+  opacity: 1;
+}
+
+/* The 5 Radial Option Buttons */
+.radial-item {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border-light);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1),
+              background-color 0.15s ease,
+              border-color 0.15s ease,
+              box-shadow 0.15s ease;
+  z-index: 10;
+}
+
+/* Exact circular placements at radius R = 68px */
+/* Option 1: Top (-90°) */
+.radial-item[data-tool="x-large"] {
+  top: -91px;
+  left: -23px;
+}
+
+/* Option 2: Top-Right (-18°) */
+.radial-item[data-tool="x-small"] {
+  top: -44px;
+  left: 42px;
+}
+
+/* Option 3: Bottom-Right (+54°) */
+.radial-item[data-tool="yellow-rect"] {
+  top: 32px;
+  left: 17px;
+}
+
+/* Option 4: Bottom-Left (+126°) */
+.radial-item[data-tool="eraser"] {
+  top: 32px;
+  left: -63px;
+}
+
+/* Option 5: Top-Left (+198°) */
+.radial-item[data-tool="cancel"] {
+  top: -44px;
+  left: -88px;
+}
+
+/* Hover & Active states */
+.radial-item:hover {
+  transform: scale(1.15);
+  background-color: var(--bg-surface-hover);
+  border-color: #f3f4f6;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.radial-item:active {
+  transform: scale(0.95);
+}
+
+.radial-item:hover .x-mark-icon,
+.radial-item:hover .tool-icon {
+  color: var(--text-primary);
+}
+
+/* Cancel option specific styling */
+.radial-item-cancel {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.radial-item-cancel:hover {
+  background-color: #3b1d24;
+  border-color: #ef4444;
+  color: #ef4444;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
+}
+
+/* Yellow rectangle icon inside radial menu */
+.radial-yellow-rect {
+  width: 16px;
+  height: 22px;
+  background-color: #facc15;
+  border: 1.5px solid #ca8a04;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* Shortcut badge on radial buttons (styled same as sidebar) */
+.radial-item .shortcut-key {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  font-size: 8px;
+  font-family: var(--font);
+  font-weight: 700;
+  color: var(--text-secondary);
+  line-height: 1;
+  pointer-events: none;
+  background: #181a20;
+  border: 1px solid var(--border);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+.radial-item:hover .shortcut-key {
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+
+/* Tooltip on hover */
+.radial-tooltip {
+  position: absolute;
+  background: #181a20;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+  z-index: 15;
+}
+
+.radial-item:hover .radial-tooltip {
+  opacity: 1;
+}
+
+.radial-item[data-tool="x-large"] .radial-tooltip {
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.radial-item[data-tool="x-small"] .radial-tooltip {
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.radial-item[data-tool="yellow-rect"] .radial-tooltip {
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.radial-item[data-tool="eraser"] .radial-tooltip {
+  bottom: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.radial-item[data-tool="cancel"] .radial-tooltip {
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 
