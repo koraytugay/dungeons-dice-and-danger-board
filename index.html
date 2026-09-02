@@ -184,6 +184,27 @@
     </div>
   </div>
 
+  <!-- Number Input Popover for Numbered Rectangle (Keeps Fullscreen intact) -->
+  <div id="number-prompt-popover" class="number-prompt-popover" style="display: none;">
+    <form id="number-prompt-form" class="number-prompt-card" onsubmit="return false;">
+      <input
+        type="text"
+        id="number-prompt-input"
+        class="number-prompt-input"
+        maxlength="3"
+        placeholder="#"
+        autocomplete="off"
+        inputmode="numeric"
+      />
+      <button type="submit" id="number-prompt-ok" class="number-prompt-btn-ok" title="Confirm (Enter)">
+        ✓
+      </button>
+      <button type="button" id="number-prompt-cancel" class="number-prompt-btn-cancel" title="Cancel (Esc)">
+        ✕
+      </button>
+    </form>
+  </div>
+
   <!-- Passcode Decryption Modal Overlay -->
   <div id="passcodeModal" class="passcode-overlay">
     <div class="passcode-card">

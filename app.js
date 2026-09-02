@@ -19,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastY = 0;
   let popupCanvasX = 0;
   let popupCanvasY = 0;
+  let popupClientX = 0;
+  let popupClientY = 0;
 
   // History Stacks for Undo / Redo
   const undoStack = [];
@@ -32,9 +34,147 @@ document.addEventListener('DOMContentLoaded', () => {
   const X_LARGE_STROKE = 20;
   const X_SMALL_RADIUS = 14; // Small X stamp (Tool 2)
   const X_SMALL_STROKE = 8;
-  const YELLOW_RECT_COLOR = 'rgba(255, 225, 0, 0.5)'; // 50% transparent yellow
-  const YELLOW_STAMP_WIDTH = 54;  // Rotated 90 degrees (vertical)
-  const YELLOW_STAMP_HEIGHT = 76;
+  const RECT_BORDER_COLOR = '#000000'; // 2px solid black border
+  const RECT_BG_COLOR = '#ffffff';     // Solid white background
+  const RECT_STAMP_WIDTH = 54;         // Kept same size as yellow (54 x 76)
+  const RECT_STAMP_HEIGHT = 76;
+
+  // Dynamically calculate stroke width so borders render as exact 2px on screen
+  function getBorderStrokeWidth(screenPx = 2) {
+    const rect = canvas.getBoundingClientRect();
+    if (rect && rect.width > 0) {
+      return (canvas.width / rect.width) * screenPx;
+    }
+    return screenPx * 2.5;
+  }
+
+  // Draw a white rectangle with 2px solid black border and an optional centered number
+  function drawNumberedRect(x, y, text) {
+    const w = RECT_STAMP_WIDTH;
+    const h = RECT_STAMP_HEIGHT;
+    const strokeW = getBorderStrokeWidth(2);
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+
+    // 1. Fill solid white background
+    ctx.fillStyle = RECT_BG_COLOR;
+    ctx.fillRect(x - w / 2, y - h / 2, w, h);
+
+    // 2. Stroke 2px solid black border
+    ctx.strokeStyle = RECT_BORDER_COLOR;
+    ctx.lineWidth = strokeW;
+    ctx.lineJoin = 'miter';
+    ctx.lineCap = 'square';
+    ctx.strokeRect(x - w / 2, y - h / 2, w, h);
+
+    // 3. If a number is entered, draw a bold, solid filled number in center
+    if (text !== null && text !== undefined) {
+      const cleanText = String(text).trim();
+      if (cleanText.length > 0) {
+        const fontSize = cleanText.length > 2 ? 28 : (cleanText.length === 2 ? 38 : 46);
+        ctx.fillStyle = '#000000';
+        ctx.font = `900 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(cleanText, x, y);
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // =========================================================================
+  // Number Prompt Popover Logic (In-page dialog to keep Fullscreen active)
+  // =========================================================================
+  const numberPopover = document.getElementById('number-prompt-popover');
+  const numberForm = document.getElementById('number-prompt-form');
+  const numberInput = document.getElementById('number-prompt-input');
+  const numberCancelBtn = document.getElementById('number-prompt-cancel');
+  let pendingRectCoords = null;
+
+  let promptOpenedAt = 0;
+
+  function isNumberPromptOpen() {
+    return numberPopover && numberPopover.style.display !== 'none';
+  }
+
+  function openNumberPrompt(clientX, clientY, canvasX, canvasY) {
+    if (!numberPopover || !numberInput) return;
+
+    pendingRectCoords = { canvasX, canvasY };
+    promptOpenedAt = Date.now();
+
+    // Clamping to stay within viewport
+    const popWidth = 140;
+    const popHeight = 50;
+    const clampedX = Math.max(popWidth / 2 + 10, Math.min(window.innerWidth - popWidth / 2 - 10, clientX));
+    const clampedY = Math.max(popHeight + 15, Math.min(window.innerHeight - 10, clientY));
+
+    numberPopover.style.left = `${clampedX}px`;
+    numberPopover.style.top = `${clampedY}px`;
+    numberPopover.style.display = 'block';
+
+    numberInput.value = '';
+    requestAnimationFrame(() => {
+      numberInput.focus();
+      numberInput.select();
+    });
+  }
+
+  function closeNumberPrompt() {
+    if (!numberPopover) return;
+    numberPopover.style.display = 'none';
+    pendingRectCoords = null;
+  }
+
+  function submitNumberPrompt() {
+    if (!pendingRectCoords) {
+      closeNumberPrompt();
+      return;
+    }
+    const val = numberInput ? numberInput.value : '';
+    const { canvasX, canvasY } = pendingRectCoords;
+    closeNumberPrompt();
+
+    saveState();
+    drawNumberedRect(canvasX, canvasY, val);
+    saveDrawingToStorage();
+  }
+
+  if (numberForm) {
+    numberForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitNumberPrompt();
+    });
+  }
+
+  if (numberCancelBtn) {
+    numberCancelBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeNumberPrompt();
+    });
+  }
+
+  if (numberInput) {
+    numberInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        closeNumberPrompt();
+      }
+    });
+  }
+
+  // Close number prompt if clicked outside (ignore the click that opened it)
+  document.addEventListener('pointerdown', (e) => {
+    if (isNumberPromptOpen()) {
+      if (Date.now() - promptOpenedAt < 120) return;
+      if (!numberPopover.contains(e.target)) {
+        closeNumberPrompt();
+      }
+    }
+  });
 
   // Ensure canvas internal resolution matches natural image resolution
   function setupCanvasResolution() {
@@ -511,7 +651,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.lineWidth = X_SMALL_STROKE;
     } else if (activeTool === 'yellow-rect') {
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = YELLOW_RECT_COLOR;
+      ctx.strokeStyle = RECT_BORDER_COLOR;
+      ctx.lineWidth = getBorderStrokeWidth(2);
+      ctx.lineJoin = 'miter';
+      ctx.lineCap = 'square';
     }
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
@@ -524,11 +667,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Primary button only (left click / touch / pen)
     if (e.button !== undefined && e.button !== 0) return;
 
+    const { x, y } = getCanvasCoordinates(e);
+
+    if (activeTool === 'yellow-rect') {
+      e.stopPropagation();
+      openNumberPrompt(e.clientX, e.clientY, x, y);
+      return;
+    }
+
     // Save state before this action begins
     saveState();
 
     isDrawing = true;
-    const { x, y } = getCanvasCoordinates(e);
     startX = x;
     startY = y;
     lastX = x;
@@ -562,12 +712,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.moveTo(x + r, y - r);
       ctx.lineTo(x - r, y + r);
       ctx.stroke();
-    } else if (activeTool === 'yellow-rect') {
-      // Stamp a 50% transparent yellow vertical rectangle centered at click
-      const w = YELLOW_STAMP_WIDTH;
-      const h = YELLOW_STAMP_HEIGHT;
-      ctx.fillStyle = YELLOW_RECT_COLOR;
-      ctx.fillRect(x - w / 2, y - h / 2, w, h);
     } else if (activeTool === 'eraser') {
       // Erase single dot on click
       const radius = ERASER_WIDTH / 2;
@@ -619,6 +763,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Draw a stamp centered at given canvas coordinates
   function drawStampAt(tool, x, y) {
     if (!tool || tool === 'cancel') return;
+
+    if (tool === 'yellow-rect') {
+      openNumberPrompt(popupClientX || window.innerWidth / 2, popupClientY || window.innerHeight / 2, x, y);
+      return;
+    }
+
     saveState();
 
     if (tool === 'x-large') {
@@ -649,12 +799,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.moveTo(x + r, y - r);
       ctx.lineTo(x - r, y + r);
       ctx.stroke();
-    } else if (tool === 'yellow-rect') {
-      ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = YELLOW_RECT_COLOR;
-      const w = YELLOW_STAMP_WIDTH;
-      const h = YELLOW_STAMP_HEIGHT;
-      ctx.fillRect(x - w / 2, y - h / 2, w, h);
     } else if (tool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.fillStyle = 'rgba(0,0,0,1)';
@@ -679,6 +823,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openRadialMenu(clientX, clientY, canvasX, canvasY) {
     if (!radialPopup || !radialMenu) return;
+    popupClientX = clientX;
+    popupClientY = clientY;
     popupCanvasX = canvasX;
     popupCanvasY = canvasY;
 
@@ -708,6 +854,8 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.addEventListener('click', (e) => {
     // If a tool is active, stamp was already drawn in pointerdown
     if (activeTool) return;
+    // Don't open if number prompt popover is open
+    if (isNumberPromptOpen()) return;
     // Don't open if passcode modal is still displayed
     if (document.getElementById('passcodeModal')) return;
     if (e.button !== undefined && e.button !== 0) return;

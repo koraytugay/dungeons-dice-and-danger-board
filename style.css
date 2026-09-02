@@ -164,15 +164,16 @@ html, body {
   color: var(--text-primary);
 }
 
-/* Yellow square icon inside the button */
+/* Rectangle icon inside the button */
 .yellow-square-icon {
   display: inline-block;
-  width: 18px;
-  height: 18px;
-  background-color: #facc15;
-  border: 1px solid #ca8a04;
-  border-radius: 3px;
+  width: 14px;
+  height: 20px;
+  background-color: #ffffff;
+  border: 2px solid #000000;
+  border-radius: 2px;
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 /* Sidebar Footer & Utility buttons */
@@ -270,7 +271,7 @@ html, body {
 }
 
 #draw-canvas.yellow-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Crect x='1.5' y='1.5' width='19' height='27' rx='2' fill='rgba(255,225,0,0.5)' stroke='%23333333' stroke-width='1.5'/%3E%3Cline x1='11' y1='9' x2='11' y2='21' stroke='%23333333' stroke-width='1'/%3E%3Cline x1='5' y1='15' x2='17' y2='15' stroke='%23333333' stroke-width='1'/%3E%3C/svg%3E") 11 15, crosshair;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='30' viewBox='0 0 22 30'%3E%3Crect x='1.5' y='1.5' width='19' height='27' rx='1' fill='none' stroke='%23ffffff' stroke-width='3.5'/%3E%3Crect x='1.5' y='1.5' width='19' height='27' rx='1' fill='none' stroke='%23000000' stroke-width='2'/%3E%3Cline x1='11' y1='10' x2='11' y2='18' stroke='%23000000' stroke-width='1.5'/%3E%3Cline x1='7' y1='14' x2='15' y2='14' stroke='%23000000' stroke-width='1.5'/%3E%3C/svg%3E") 11 15, crosshair;
 }
 
 #draw-canvas.eraser-active {
@@ -931,16 +932,16 @@ html, body {
   left: -24px;
 }
 
-/* Option 2: Bottom-Right (+30°) */
+/* Option 2: Bottom-Left (+150°) -> 2 on the left */
 .radial-item[data-tool="x-small"] {
   top: -6px;
-  left: 7px;
+  left: -55px;
 }
 
-/* Option 3: Bottom-Left (+150°) */
+/* Option 3: Bottom-Right (+30°) -> 3 on the right */
 .radial-item[data-tool="yellow-rect"] {
   top: -6px;
-  left: -55px;
+  left: 7px;
 }
 
 /* Hover & Active states */
@@ -959,14 +960,15 @@ html, body {
   color: var(--text-primary);
 }
 
-/* Yellow rectangle icon inside radial menu */
+/* Rectangle icon inside radial menu */
 .radial-yellow-rect {
   width: 17px;
   height: 23px;
-  background-color: #facc15;
-  border: 1.5px solid #ca8a04;
+  background-color: #ffffff;
+  border: 2px solid #000000;
   border-radius: 2px;
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 /* Shortcut badge on radial buttons */
@@ -1029,6 +1031,101 @@ html, body {
   bottom: -26px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+/* ==========================================================================
+   Number Prompt Popover (In-page dialog to keep Fullscreen active)
+   ========================================================================== */
+.number-prompt-popover {
+  position: fixed;
+  z-index: 9999;
+  transform: translate(-50%, -100%);
+  margin-top: -12px;
+  pointer-events: auto;
+}
+
+.number-prompt-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #181a20;
+  border: 1.5px solid var(--border-light);
+  padding: 5px 6px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), 0 2px 8px rgba(0, 0, 0, 0.4);
+  animation: numberPromptPop 0.12s cubic-bezier(0.175, 0.885, 0.32, 1.25);
+}
+
+@keyframes numberPromptPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.number-prompt-input {
+  width: 44px;
+  height: 34px;
+  background-color: #0f172a;
+  border: 1.5px solid #3b82f6;
+  border-radius: 5px;
+  color: #ffffff;
+  font-family: var(--font);
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.number-prompt-input:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+.number-prompt-btn-ok {
+  height: 34px;
+  padding: 0 10px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.12s ease;
+}
+
+.number-prompt-btn-ok:hover {
+  background-color: #1d4ed8;
+}
+
+.number-prompt-btn-cancel {
+  width: 28px;
+  height: 34px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+.number-prompt-btn-cancel:hover {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.12);
 }
 
 
