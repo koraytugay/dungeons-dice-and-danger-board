@@ -108,36 +108,22 @@
       </div>
     </main>
 
-    <!-- Right Side Dice Roller Panel -->
+    <!-- Right Side Dice Roller Panel (Narrow & Streamlined) -->
     <aside id="roller-panel">
-      <div class="roller-header">
-        <h2>Dungeons, Dice & Danger</h2>
-        <span class="roller-subtitle">Dice Roller & Pairings</span>
-      </div>
-
-      <div class="dice-container" id="diceContainer">
-        <div class="dice-row">
-          <div class="die white">?</div>
-          <div class="die white">?</div>
-          <div class="die white">?</div>
-          <div class="die white">?</div>
-          <div class="die black" id="blackDie">?</div>
-        </div>
-        <label class="checkbox-container">
-          <input type="checkbox" id="useBlackDie" checked>
-          <span>Roll Black</span>
-        </label>
-      </div>
-
       <button id="rollBtn" class="roll-btn" title="Roll Dice (Press R)">
-        <span>Roll Dice</span>
+        <span>Roll</span>
         <kbd class="roll-kbd">R</kbd>
       </button>
+
+      <label class="checkbox-container" title="Include Black Die">
+        <input type="checkbox" id="useBlackDie" checked>
+        <span>+ Black</span>
+      </label>
 
       <div class="combinations-section" id="combinationsSection">
         <div class="combinations" id="whiteCombinations"></div>
         <div id="sectionDivider" class="divider" style="display: none;">
-          <span>Pairs with Black Die</span>
+          <span>⬛ Black</span>
         </div>
         <div class="combinations" id="blackCombinations"></div>
       </div>

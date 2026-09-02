@@ -256,7 +256,7 @@ html, body {
   width: 100%;
   height: 100%;
   touch-action: none;
-  cursor: crosshair;
+  cursor: default;
 }
 
 /* Active Cursors */
@@ -277,134 +277,97 @@ html, body {
 }
 
 /* ==========================================================================
-   Right Side Roller Panel (Fluid & Container-Aware)
+   Right Side Roller Panel (Ultra-Narrow & Streamlined)
    ========================================================================== */
 #roller-panel {
-  flex: 0 0 clamp(240px, 20vw, 320px);
-  width: clamp(240px, 20vw, 320px);
-  min-width: 230px;
-  max-width: 340px;
+  flex: 0 0 110px;
+  width: 110px;
+  min-width: 104px;
+  max-width: 116px;
   height: 100%;
   background-color: #181a20;
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.85rem 0.65rem;
+  padding: 8px 4px;
   overflow-y: auto;
   overflow-x: hidden;
   z-index: 15;
-  container-type: inline-size;
-  container-name: roller;
+  box-sizing: border-box;
 }
 
 #roller-panel::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 #roller-panel::-webkit-scrollbar-track {
   background: #181a20;
 }
 #roller-panel::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
-}
-#roller-panel::-webkit-scrollbar-thumb:hover {
-  background: var(--border-light);
+  border-radius: 2px;
 }
 
-.roller-header {
-  text-align: center;
-  margin-bottom: 0.65rem;
-  width: 100%;
-}
-
-.roller-header h2 {
-  font-size: clamp(0.92rem, 4.5cqi, 1.12rem);
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-
-.roller-subtitle {
-  font-size: clamp(0.68rem, 3.2cqi, 0.78rem);
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.dice-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.65rem;
-  width: 100%;
-}
-
-.dice-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(0.25rem, 1.8cqi, 0.45rem);
-}
-
-.die {
-  width: clamp(34px, 14cqi, 44px);
-  height: clamp(34px, 14cqi, 44px);
-  border-radius: var(--radius-md);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: clamp(1.2rem, 5.8cqi, 1.55rem);
+.roll-btn {
+  background-color: var(--accent);
+  color: #000000;
+  border: none;
+  padding: 6px 4px;
+  font-size: 0.82rem;
   font-weight: 800;
-  user-select: none;
-  cursor: default;
-}
-
-.die.white {
-  background: #ffffff;
-  color: #121212;
-  border: 1px solid #d1d5db;
-}
-
-.die.black {
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  margin-bottom: 6px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  user-select: none;
+  flex-shrink: 0;
 }
 
-.die.black:hover {
-  border-color: #6b7280;
+.roll-btn:hover {
+  background-color: var(--accent-hover);
 }
 
-.die.rolling {
-  animation: roll 0.4s infinite;
+.roll-btn:active {
+  transform: scale(0.97);
 }
 
-@keyframes roll {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(4deg); }
-  50% { transform: rotate(-4deg); }
-  75% { transform: rotate(4deg); }
-  100% { transform: rotate(0deg); }
+.roll-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.16);
+  color: #000000;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1;
 }
 
 .checkbox-container {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  font-size: clamp(0.68rem, 3cqi, 0.78rem);
-  font-weight: 500;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
   user-select: none;
-  padding: 2px 7px;
+  padding: 3px 6px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   transition: border-color 0.15s ease;
+  width: 100%;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .checkbox-container:hover {
@@ -419,51 +382,16 @@ html, body {
   height: 12px;
 }
 
-.roll-btn {
-  background-color: var(--accent);
-  color: #000000;
-  border: none;
-  padding: 0.5rem 1.35rem;
-  font-size: clamp(0.85rem, 3.8cqi, 0.98rem);
-  font-weight: 700;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
-  margin-bottom: 0.75rem;
-  width: 90%;
-  max-width: 200px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-
-.roll-btn:hover {
-  background-color: var(--accent-hover);
-}
-
-.roll-kbd {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.14);
-  color: #000000;
-  font-size: 0.68rem;
-  font-weight: 800;
-  padding: 1px 5px;
-  border-radius: 3px;
-  line-height: 1;
-}
-
 .combinations-section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  align-items: center;
+  gap: 4px;
 }
 
 .rolling-overlay {
-  opacity: 0.35;
+  opacity: 0.4;
   pointer-events: none;
 }
 
@@ -472,8 +400,8 @@ html, body {
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 0.55rem 0 0.3rem 0;
-  gap: 0.4rem;
+  margin: 10px 0 8px 0;
+  gap: 4px;
 }
 
 .divider::before,
@@ -484,109 +412,122 @@ html, body {
 }
 
 .divider span {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #f1f5f9;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  background-color: #242733;
-  border: 1px solid #475569;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f8fafc;
+  background-color: #0f172a;
+  border: 1.5px solid #64748b;
   border-radius: var(--radius-full);
-  padding: 2px 8px;
+  padding: 3px 8px;
   white-space: nowrap;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .combinations {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   width: 100%;
+  align-items: center;
 }
 
 .combination {
   background-color: transparent;
-  padding: 5px 4px;
+  padding: 2px;
   border-radius: 6px;
-  border: 1px solid #6b7280;
+  border: 1px solid #374151;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .combination.has-black {
-  border: 1px solid #6b7280;
-  background-color: transparent;
+  border-color: #4b5563;
 }
 
 .pair-square {
-  width: clamp(56px, 25cqi, 70px);
-  height: clamp(56px, 25cqi, 70px);
+  width: 44px;
+  height: 44px;
   border-radius: 4px;
   background: #ffffff;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 1px solid #000000;
+  border: 1.5px solid #cbd5e1;
   flex-shrink: 0;
+  position: relative;
+  box-sizing: border-box;
+  transition: transform 0.1s ease;
 }
 
 .pair-square.has-black-die {
-  border: 2px solid #000000;
-  background: #f1f5f9;
+  background: #111827;
+  border: 1.5px solid #000000;
 }
 
 .pair-square.is-doubles {
   background-color: #dcfce7 !important;
-  border-color: #86efac !important;
+  border-color: #22c55e !important;
+}
+
+.pair-square.is-doubles.has-black-die {
+  background-color: #14532d !important;
+  border-color: #000000 !important;
 }
 
 .pair-sum {
-  font-size: clamp(1.35rem, 6.2cqi, 1.75rem);
+  font-size: 1.35rem;
   font-weight: 800;
   line-height: 1;
   color: #000000;
+  user-select: none;
+}
+
+.pair-square.has-black-die .pair-sum {
+  color: #ffffff;
 }
 
 .pair-square.is-doubles .pair-sum {
   color: #14532d;
 }
 
-.pair-dice {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  margin-top: 2px;
+.pair-square.is-doubles.has-black-die .pair-sum {
+  color: #86efac;
 }
 
-.mini-die {
-  width: clamp(16px, 7cqi, 20px);
-  height: clamp(16px, 7cqi, 20px);
-  border-radius: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: clamp(0.65rem, 3cqi, 0.8rem);
+.black-badge {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: 0.5rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.doubles-badge {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  font-size: 0.55rem;
   font-weight: 900;
+  line-height: 1;
+  color: #15803d;
+  background: rgba(34, 197, 94, 0.2);
+  padding: 0 2px;
+  border-radius: 2px;
 }
 
-.mini-die.white {
-  background-color: #ffffff;
-  color: #0f172a;
-  border: 1px solid #64748b;
-}
-
-.mini-die.black {
-  background-color: #0f172a;
-  color: #ffffff;
-  border: 1px solid #000000;
-}
-
-.plus-sign {
-  font-size: clamp(0.65rem, 3cqi, 0.8rem);
-  color: #64748b;
-  font-weight: 800;
+.pair-square.is-doubles.has-black-die .doubles-badge {
+  color: #86efac;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 /* ==========================================================================
@@ -735,6 +676,42 @@ html, body {
 }
 
 /* ==========================================================================
+   Fullscreen Mode Styles (Maximized board with zero dead space)
+   ========================================================================== */
+:fullscreen #sidebar,
+.is-fullscreen #sidebar {
+  width: 38px;
+  min-width: 38px;
+  max-width: 38px;
+  padding: 6px 2px;
+}
+
+:fullscreen #board-wrapper,
+.is-fullscreen #board-wrapper {
+  padding: 0;
+}
+
+:fullscreen #canvas-container,
+.is-fullscreen #canvas-container {
+  border: none;
+  border-radius: 0;
+  max-height: 100vh;
+}
+
+:fullscreen #board-image,
+.is-fullscreen #board-image {
+  max-height: 100vh;
+}
+
+:fullscreen #roller-panel,
+.is-fullscreen #roller-panel {
+  width: 104px;
+  min-width: 100px;
+  max-width: 106px;
+  padding: 6px 2px;
+}
+
+/* ==========================================================================
    Responsive iPad Portrait & Vertical Tablet Styles
    ========================================================================== */
 @media (max-width: 900px), (orientation: portrait) and (max-width: 1024px) {
@@ -805,18 +782,18 @@ html, body {
     flex: 1 1 auto;
     width: 100%;
     height: auto;
-    max-height: calc(100vh - 40px - 26vh);
+    max-height: calc(100vh - 40px - 22vh);
     padding: 2px;
     min-height: 0;
   }
 
   #canvas-container {
-    max-height: calc(100vh - 40px - 27vh);
+    max-height: calc(100vh - 40px - 23vh);
     max-width: 100%;
   }
 
   #board-image {
-    max-height: calc(100vh - 40px - 27vh);
+    max-height: calc(100vh - 40px - 23vh);
     max-width: 100%;
   }
 
@@ -825,83 +802,54 @@ html, body {
     width: 100%;
     max-width: 100%;
     min-width: 100%;
-    max-height: 26vh;
+    max-height: 22vh;
     border-left: none;
     border-top: 1px solid var(--border);
-    padding: 0.4rem 0.6rem;
+    padding: 0.3rem 0.5rem;
     overflow-y: auto;
-  }
-
-  .roller-header {
-    margin-bottom: 0.3rem;
-  }
-
-  .roller-header h2 {
-    font-size: 0.85rem;
-  }
-
-  .roller-subtitle {
-    font-size: 0.62rem;
-  }
-
-  .dice-container {
-    gap: 0.35rem;
-    margin-bottom: 0.4rem;
-  }
-
-  .die {
-    width: 28px;
-    height: 28px;
-    font-size: 1rem;
-    border-radius: 4px;
-  }
-
-  .checkbox-container {
-    font-size: 0.62rem;
-    padding: 1px 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
   }
 
   .roll-btn {
-    padding: 0.3rem 0.75rem;
-    font-size: 0.78rem;
-    margin-bottom: 0.4rem;
+    width: auto;
+    padding: 4px 12px;
+    margin-bottom: 0;
+  }
+
+  .checkbox-container {
+    width: auto;
+    margin-bottom: 0;
+  }
+
+  .combinations-section {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
   }
 
   .combinations {
-    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 4px;
+    width: auto;
   }
 
   .combination {
-    padding: 3px 2px;
-    gap: 3px;
-    border-radius: 4px;
+    width: auto;
   }
 
   .pair-square {
-    width: 44px;
-    height: 44px;
-    border-radius: 3px;
+    width: 42px;
+    height: 42px;
   }
 
   .pair-sum {
-    font-size: 1.05rem;
-  }
-
-  .pair-dice {
-    margin-top: 1px;
-    gap: 2px;
-  }
-
-  .mini-die {
-    width: 13px;
-    height: 13px;
-    font-size: 0.55rem;
-    border-radius: 2px;
-  }
-
-  .plus-sign {
-    font-size: 0.55rem;
+    font-size: 1.2rem;
   }
 }
 

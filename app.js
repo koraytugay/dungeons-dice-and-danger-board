@@ -360,6 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateFullscreenIcon() {
     const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+    document.body.classList.toggle('is-fullscreen', !!isFullscreen);
     const icon = document.getElementById('fullscreen-icon');
     if (icon) {
       if (isFullscreen) {
@@ -762,45 +763,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let lastDice = [];
 
-  function toggleBlackFromDie() {
-    if (!useBlackDie) return;
-    useBlackDie.checked = !useBlackDie.checked;
-    toggleBlackDie();
-  }
-
   function toggleBlackDie() {
-    if (!useBlackDie || !blackDie) return;
-    const isChecked = useBlackDie.checked;
-    blackDie.style.opacity = isChecked ? '1' : '0.3';
-    blackDie.textContent = isChecked ? (blackDie.textContent === '?' ? '?' : blackDie.textContent) : '-';
-    if (lastDice.length > 0) calculatePairings(lastDice);
+    if (lastDice.length > 0) {
+      if (useBlackDie && !useBlackDie.checked) {
+        calculatePairings(lastDice.filter(d => d.type !== 'black'));
+      } else {
+        calculatePairings(lastDice);
+      }
+    }
   }
 
-  if (blackDie) {
-    blackDie.addEventListener('click', toggleBlackFromDie);
-  }
   if (useBlackDie) {
     useBlackDie.addEventListener('change', toggleBlackDie);
   }
 
   function startRoll() {
     if (!rollBtn || !combinationsSection) return;
-    const useBlack = useBlackDie ? useBlackDie.checked : false;
 
     rollBtn.disabled = true;
     combinationsSection.classList.add('rolling-overlay');
-
-    const diceEls = document.querySelectorAll('#diceContainer .die');
-    diceEls.forEach((die, index) => {
-      if (index === 4 && !useBlack) return;
-      die.classList.add('rolling');
-    });
 
     setTimeout(() => {
       rollDice();
       rollBtn.disabled = false;
       combinationsSection.classList.remove('rolling-overlay');
-    }, 600);
+    }, 200);
   }
 
   if (rollBtn) {
@@ -817,31 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dice.push({ id: 4, value: Math.floor(Math.random() * 6) + 1, type: 'black' });
     }
     lastDice = dice;
-    renderDice(dice);
     calculatePairings(dice);
-  }
-
-  function renderDice(dice) {
-    const useBlack = useBlackDie ? useBlackDie.checked : false;
-    const diceEls = document.querySelectorAll('#diceContainer .die');
-    for (let i = 0; i < 4; i++) {
-      if (diceEls[i]) {
-        diceEls[i].textContent = dice[i].value;
-        diceEls[i].classList.remove('rolling');
-      }
-    }
-    const blackDieEl = diceEls[4];
-    if (blackDieEl) {
-      blackDieEl.classList.remove('rolling');
-      if (useBlack) {
-        const d = dice.find(x => x.type === 'black');
-        blackDieEl.textContent = d ? d.value : '?';
-        blackDieEl.style.opacity = '1';
-      } else {
-        blackDieEl.textContent = '-';
-        blackDieEl.style.opacity = '0.3';
-      }
-    }
   }
 
   function createPairObj(pair) {
@@ -910,24 +873,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.createElement('div');
       el.className = `combination ${res.hasBlackInSet ? 'has-black' : ''}`;
 
-      function formatDice(pairObj) {
-        const d1 = pairObj.dice[0];
-        const d2 = pairObj.dice[1];
-        return `
-          <div class="mini-die ${d1.type}">${d1.value}</div>
-          <div class="plus-sign">+</div>
-          <div class="mini-die ${d2.type}">${d2.value}</div>
-        `;
-      }
-
       el.innerHTML = `
-        <div class="pair-square ${res.p1.isDoubles ? 'is-doubles' : ''} ${res.p1.hasBlack ? 'has-black-die' : ''}">
+        <div class="pair-square ${res.p1.isDoubles ? 'is-doubles' : ''} ${res.p1.hasBlack ? 'has-black-die' : ''}" title="${res.p1.hasBlack ? 'Uses Black Die' : 'White Dice'}${res.p1.isDoubles ? ' (Doubles)' : ''}">
+          ${res.p1.hasBlack ? '<span class="black-badge">⬛</span>' : ''}
+          ${res.p1.isDoubles ? '<span class="doubles-badge">2×</span>' : ''}
           <div class="pair-sum">${res.p1.sum}</div>
-          <div class="pair-dice">${formatDice(res.p1)}</div>
         </div>
-        <div class="pair-square ${res.p2.isDoubles ? 'is-doubles' : ''} ${res.p2.hasBlack ? 'has-black-die' : ''}">
+        <div class="pair-square ${res.p2.isDoubles ? 'is-doubles' : ''} ${res.p2.hasBlack ? 'has-black-die' : ''}" title="${res.p2.hasBlack ? 'Uses Black Die' : 'White Dice'}${res.p2.isDoubles ? ' (Doubles)' : ''}">
+          ${res.p2.hasBlack ? '<span class="black-badge">⬛</span>' : ''}
+          ${res.p2.isDoubles ? '<span class="doubles-badge">2×</span>' : ''}
           <div class="pair-sum">${res.p2.sum}</div>
-          <div class="pair-dice">${formatDice(res.p2)}</div>
         </div>
       `;
 
